@@ -9,7 +9,6 @@ import 'package:weather_app_bloc_api/services/weather_api_client.dart';
 // ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
   final WeatherBloc weatherBloc;
- 
 
   const HomeScreen(this.weatherBloc, {super.key});
 
@@ -20,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController inputController = TextEditingController();
 
-   WeatherApiClient weatherApiClient = WeatherApiClient();
+  WeatherApiClient weatherApiClient = WeatherApiClient();
 
   static const String _kLocationServicesDisabledMessage = 'Location services are disabled.';
   // static const String _kPermissionDeniedMessage = 'Permission denied.';
@@ -30,8 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
   Position? position;
-  
-
 
   @override
   void initState() {
@@ -39,11 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
     _getCurrentPosition();
   }
 
-  Future<Object> _getCurrentPosition() async {
+  Future<Position> _getCurrentPosition() async {
     final hasPermission = await _handlePermission();
 
     if (!hasPermission) {
-      return {};
+      throw Exception('Location permissions not granted');
     }
 
     Position localPosition = await _geolocatorPlatform.getCurrentPosition();
@@ -124,7 +121,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   onPressed: () async {
                     String location = inputController.text;
-                    widget.weatherBloc.add(GetWeather(location));
+                    if (location.isEmpty) {
+                      Position position = await _getCurrentPosition();
+                      widget.weatherBloc.add(GetWeatherByLatLon(position.latitude, position.longitude));
+                    } else {
+                      
+                      widget.weatherBloc.add(GetWeather(location));
+                    }
                   },
                   child: const Text('Update'),
                 ),
