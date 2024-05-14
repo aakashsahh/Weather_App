@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+     <!-- Permissions options for the location group -->
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+     <!-- Permissions options for the internet access -->
+     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="weather_app_bloc_api"
         android:name="${applicationName}"
