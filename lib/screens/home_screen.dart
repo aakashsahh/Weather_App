@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather_app_bloc_api/blocs/home_bloc.dart';
 import 'package:weather_app_bloc_api/blocs/home_event.dart';
@@ -89,6 +90,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return true;
   }
 
+  Future<bool> isValidLocation(String location) async {
+    try {
+      List<Location> locations = await locationFromAddress(location);
+      return locations.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
         bloc: widget.weatherBloc,
         builder: (context, state) {
           if (state is WeatherLoading) {
-            return CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           } else if (state is WeatherLoaded) {
             return Column(
               children: [
@@ -125,8 +135,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       Position position = await _getCurrentPosition();
                       widget.weatherBloc.add(GetWeatherByLatLon(position.latitude, position.longitude));
                     } else {
-                      
-                      widget.weatherBloc.add(GetWeather(location));
+                      if (await isValidLocation(location)) {
+                        widget.weatherBloc.add(GetWeather(location));
+                      } else {
+                        // Handle invalid location
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Invalid Location'),
+                              content: const Text('Please enter a valid location.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                     }
                   },
                   child: const Text('Update'),
@@ -134,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             );
           } else if (state is WeatherError) {
-            return Text('Error: ${state.message}');
+            return Center(child: Text('Error: ${state.message}'));
           } else {
             return Container();
           }
