@@ -125,184 +125,188 @@ class _HomeScreenState extends State<HomeScreen> {
           if (state is WeatherLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is WeatherLoaded) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: inputController,
-                    decoration: InputDecoration(
-                      label: const Text("Location"),
-                      hintText: "Enter location",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
+            return ListView(children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: inputController,
+                      decoration: InputDecoration(
+                        label: const Text("Location"),
+                        hintText: "Enter location",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      shape: const StadiumBorder(),
-                      side: const BorderSide(width: 2, color: Colors.red),
+                    const SizedBox(
+                      height: 20,
                     ),
-                    onPressed: () async {
-                      String location = inputController.text;
-                      if (location.isEmpty) {
-                        Position position = await _getCurrentPosition();
-                        widget.weatherBloc.add(GetWeatherByLatLon(position.latitude, position.longitude));
-                      } else {
-                        if (await isValidLocation(location)) {
-                          widget.weatherBloc.add(GetWeather(location));
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        shape: const StadiumBorder(),
+                        side: const BorderSide(width: 2, color: Colors.red),
+                      ),
+                      onPressed: () async {
+                        String location = inputController.text;
+                        if (location.isEmpty) {
+                          Position position = await _getCurrentPosition();
+                          widget.weatherBloc.add(GetWeatherByLatLon(position.latitude, position.longitude));
                         } else {
-                          // Handle invalid location
-                          showDialog(
-                            // ignore: use_build_context_synchronously
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Invalid Location'),
-                                content: const Text('Please enter a valid location.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: const Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                          if (await isValidLocation(location)) {
+                            widget.weatherBloc.add(GetWeather(location));
+                          } else {
+                            // Handle invalid location
+                            showDialog(
+                              // ignore: use_build_context_synchronously
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Invalid Location'),
+                                  content: const Text('Please enter a valid location.'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
                         }
-                      }
-                    },
-                    child: const Text('Update'),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: Column(
-                      children: [
-                        (state.weather.icon != null)
-                            ? Image.network(
-                                "https://openweathermap.org/img/wn/${state.weather.icon}@2x.png",
-                                height: 100,
-                                width: 200,
-                              )
-                            : const Text("No data Found"),
-                        Text(
-                          (state.weather.currentTemp != null) ? '${state.weather.currentTemp} \u2103' : "No data Found",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 22,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          (state.weather.cityName != null) ? '${state.weather.cityName}' : "No Data Found",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          (state.weather.condition != null) ? '${state.weather.condition}' : "No Data Found",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
+                      },
+                      child: const Text('Update'),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-
-                  //additional information section
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Additional Information",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      const Divider(
-                        color: Colors.grey,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Column(
                         children: [
-                          const Text(
-                            "Humidity",
+                          (state.weather.icon != null)
+                              ? Image.network(
+                                  "https://openweathermap.org/img/wn/${state.weather.icon}@2x.png",
+                                  height: 100,
+                                  width: 200,
+                                )
+                              : const Text("No data Found"),
+                          Text(
+                            (state.weather.currentTemp != null)
+                                ? '${state.weather.currentTemp} \u2103'
+                                : "No data Found",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 22,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
                           ),
                           Text(
-                            (state.weather.humidity != null) ? '${state.weather.humidity}' : "unaware",
-                            //state.weather.humidity.toString(),
-                            style: textStyle,
+                            (state.weather.cityName != null) ? '${state.weather.cityName}' : "No Data Found",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            (state.weather.condition != null) ? '${state.weather.condition}' : "No Data Found",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      Row(
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+
+                    //additional information section
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Additional Information",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const Divider(
+                          color: Colors.grey,
+                        ),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Text(
-                              "Pressure",
-                              style: textStyle,
+                              "Humidity",
                             ),
                             Text(
-                              (state.weather.pressure != null) ? '${state.weather.pressure}' : "unaware",
+                              (state.weather.humidity != null) ? '${state.weather.humidity}' : "unaware",
+                              //state.weather.humidity.toString(),
                               style: textStyle,
                             ),
-                          ]),
-                      const SizedBox(height: 10),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Wind",
-                              style: textStyle,
-                            ),
-                            Text(
-                              (state.weather.wind != null) ? '${state.weather.wind}' : "unaware",
-                              style: textStyle,
-                            ),
-                          ]),
-                      const SizedBox(height: 10),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Feels Like",
-                              style: textStyle,
-                            ),
-                            Text(
-                              (state.weather.feelsLike != null) ? '${state.weather.feelsLike} \u2103' : "unaware",
-                              style: textStyle,
-                            ),
-                          ]),
-                    ],
-                  ),
-                ],
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Pressure",
+                                style: textStyle,
+                              ),
+                              Text(
+                                (state.weather.pressure != null) ? '${state.weather.pressure}' : "unaware",
+                                style: textStyle,
+                              ),
+                            ]),
+                        const SizedBox(height: 10),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Wind",
+                                style: textStyle,
+                              ),
+                              Text(
+                                (state.weather.wind != null) ? '${state.weather.wind}' : "unaware",
+                                style: textStyle,
+                              ),
+                            ]),
+                        const SizedBox(height: 10),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Feels Like",
+                                style: textStyle,
+                              ),
+                              Text(
+                                (state.weather.feelsLike != null) ? '${state.weather.feelsLike} \u2103' : "unaware",
+                                style: textStyle,
+                              ),
+                            ]),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            );
+            ]);
           } else if (state is WeatherError) {
             return Center(
               child: Column(

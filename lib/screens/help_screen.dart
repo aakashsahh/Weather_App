@@ -28,22 +28,27 @@ class _HelpScreenState extends State<HelpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[50],
-          image: const DecorationImage(
-            image: NetworkImage(
-                'https://www.vhv.rs/dpng/d/427-4270068_gold-retro-decorative-frame-png-free-download-transparent.png'),
-            fit: BoxFit.fitWidth,
+        body: Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            image: const DecorationImage(
+              image: AssetImage('assets/images/back.png'),
+              //  NetworkImage(
+              //     'https://www.vhv.rs/dpng/d/427-4270068_gold-retro-decorative-frame-png-free-download-transparent.png'),
+              fit: BoxFit.fitWidth,
+            ),
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // ignore: prefer_const_constructors
-            Center(
-              child: const Text(
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // ignore: prefer_const_constructors
+
+              const Text(
                 "We show weather for you",
                 style: TextStyle(
                   fontSize: 22.0,
@@ -51,22 +56,23 @@ class _HelpScreenState extends State<HelpScreen> {
                   color: Colors.black,
                 ),
               ),
-            ),
-            const SizedBox(height: 40.0),
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                shape: const StadiumBorder(),
-                side: const BorderSide(width: 2, color: Colors.red),
+
+              const SizedBox(height: 40.0),
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  shape: const StadiumBorder(),
+                  side: const BorderSide(width: 2, color: Colors.red),
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (_) => HomeScreen(WeatherBloc(WeatherApiClient()))));
+                },
+                child: const Text('Skip'),
               ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (_) => HomeScreen(WeatherBloc(WeatherApiClient()))));
-              },
-              child: const Text('Skip'),
-            ),
-          ],
-        ),
-      ),
-    );
+            ],
+          ),
+        )
+      ],
+    ));
   }
 }
