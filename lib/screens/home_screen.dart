@@ -8,6 +8,7 @@ import 'package:weather_app_bloc_api/blocs/home_bloc.dart';
 import 'package:weather_app_bloc_api/blocs/home_event.dart';
 import 'package:weather_app_bloc_api/blocs/home_state.dart';
 import 'package:weather_app_bloc_api/services/weather_api_client.dart';
+import 'package:weather_app_bloc_api/utils/text_style.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
@@ -220,9 +221,80 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: 5,
                   ),
-                  const Divider(
-                    color: Colors.grey,
-                  )
+
+                  //additional information section
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Additional Information",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      const Divider(
+                        color: Colors.grey,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Humidity",
+                          ),
+                          Text(
+                            (state.weather.humidity != null) ? '${state.weather.humidity}' : "unaware",
+                            //state.weather.humidity.toString(),
+                            style: textStyle,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Pressure",
+                              style: textStyle,
+                            ),
+                            Text(
+                              (state.weather.pressure != null) ? '${state.weather.pressure}' : "unaware",
+                              style: textStyle,
+                            ),
+                          ]),
+                      const SizedBox(height: 10),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Wind",
+                              style: textStyle,
+                            ),
+                            Text(
+                              (state.weather.wind != null) ? '${state.weather.wind}' : "unaware",
+                              style: textStyle,
+                            ),
+                          ]),
+                      const SizedBox(height: 10),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Feels Like",
+                              style: textStyle,
+                            ),
+                            Text(
+                              (state.weather.feelsLike != null) ? '${state.weather.feelsLike} \u2103' : "unaware",
+                              style: textStyle,
+                            ),
+                          ]),
+                    ],
+                  ),
                 ],
               ),
             );
