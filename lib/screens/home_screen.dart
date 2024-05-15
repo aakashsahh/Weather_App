@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:weather_app_bloc_api/blocs/home_bloc.dart';
-import 'package:weather_app_bloc_api/blocs/home_event.dart';
-import 'package:weather_app_bloc_api/blocs/home_state.dart';
+import 'package:weather_app_bloc_api/blocs/weather_bloc.dart';
+import 'package:weather_app_bloc_api/blocs/weather_event.dart';
+import 'package:weather_app_bloc_api/blocs/weather_state.dart';
+import 'package:weather_app_bloc_api/screens/help_screen.dart';
 import 'package:weather_app_bloc_api/services/weather_api_client.dart';
 import 'package:weather_app_bloc_api/utils/text_style.dart';
 
@@ -59,9 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
     serviceEnabled = await _geolocatorPlatform.isLocationServiceEnabled();
     if (!serviceEnabled) {
       _showSnackBar(_kLocationServicesDisabledMessage);
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(content: Text(_kLocationServicesDisabledMessage)),
-      //);
 
       return false;
     }
@@ -70,26 +68,17 @@ class _HomeScreenState extends State<HomeScreen> {
     if (permission == LocationPermission.denied) {
       permission = await _geolocatorPlatform.requestPermission();
       if (permission == LocationPermission.denied) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(content: Text("Location Permission is denied")),
-        // );
         _showSnackBar("Location Permission is denied");
         return false;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(content: Text("Location Permission is denied, Please enable it from settings")),
-      // );
       _showSnackBar("Location Permission is denied, Please enable it from settings");
 
       return false;
     }
 
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text(_kPermissionGrantedMessage)),
-    // );
     _showSnackBar(_kPermissionGrantedMessage);
 
     return true;
@@ -113,7 +102,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Weather App'),
+        title: const Text('Weather App'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (builder) => const HelpScreen(),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.help)),
+          )
+        ],
       ),
       body: BlocBuilder<WeatherBloc, WeatherState>(
         bloc: widget.weatherBloc,
@@ -154,6 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         } else {
                           // Handle invalid location
                           showDialog(
+                            // ignore: use_build_context_synchronously
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
