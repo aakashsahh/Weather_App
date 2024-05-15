@@ -12,8 +12,14 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
         emit(WeatherLoading());
         
         final weather = await weatherApiClient.getCurrentWeather(event.location);
-        emit(WeatherLoaded(weather!));
+        if(weather!=null){
+          emit(WeatherLoaded(weather));
+        }else{
+          emit(WeatherError('No weather data found.'));
+        }
+        
       } catch (e) {
+         print("WeatherBloc Error: $e");
         emit(WeatherError(e.toString()));
       }
     });
@@ -22,7 +28,12 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
       try {
         emit(WeatherLoading());
         final weather = await weatherApiClient.getWeatherByLatLon(event.lat, event.lon);
-        emit(WeatherLoaded(weather!));
+         if (weather != null){
+          emit(WeatherLoaded(weather));
+         }else{
+          emit(WeatherError('No weather data found.'));
+         }
+        
       } catch (e) {
         emit(WeatherError(e.toString()));
       }

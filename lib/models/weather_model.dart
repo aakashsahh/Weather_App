@@ -18,13 +18,29 @@ class WeatherModel {
     this.condition,
   );
   WeatherModel.fromJson(Map<String, dynamic> json) {
-    currentTemp = json['main']['temp'];
-    feelsLike = json['main']['feels_like'];
-    humidity = json['main']['humidity'];
-    pressure = json['main']['pressure'];
-    wind = json['wind']['deg'];
+     if (json['main'] != null) {
+      currentTemp = json['main']['temp'];
+      feelsLike = json['main']['feels_like'];
+      humidity = json['main']['humidity'];
+      pressure = json['main']['pressure'];
+    }
+    if (json['wind'] != null) {
+      wind = json['wind']['deg'];
+    }
     cityName = json['name'];
-    condition = json['weather'][0]['main'];
-    icon = json['weather'][0]['icon'];
+    if (json['weather'] != null && json['weather'].isNotEmpty) {
+      condition = json['weather'][0]['main'];
+      icon = json['weather'][0]['icon'];
+    }
+
+
+    // currentTemp = json['main']['temp'];
+    // feelsLike = json['main']['feels_like'];
+    // humidity = json['main']['humidity'];
+    // pressure = json['main']['pressure'];
+    // wind = json['wind']['deg'];
+    // cityName = json['name'];
+    // condition = json['weather'][0]['main'];
+    // icon = json['weather'][0]['icon'];
   }
 }

@@ -11,7 +11,13 @@ class WeatherApiClient {
     Uri endpoint = Uri.parse(baseUrl);
 
     var response = await http.get(endpoint);
+    print("getCurrentWeather response body: ${response.body}");
     var body = jsonDecode(response.body);
+     if (body['main'] == null) {
+      throw Exception('Invalid location or no weather data found');
+    }
+
+
     var data = WeatherModel.fromJson(body);
 
     return data;
@@ -23,7 +29,11 @@ class WeatherApiClient {
     Uri endpoint = Uri.parse(baseUrl);
 
     var response = await http.get(endpoint);
+    print("getWeatherByLatLon response body: ${response.body}");
     var body = jsonDecode(response.body);
+     if (body['main'] == null) {
+      throw Exception('Invalid location or no weather data found');
+    }
     var data = WeatherModel.fromJson(body);
 
     return data;

@@ -17,9 +17,8 @@ class WeatherApp extends StatelessWidget {
       create: (context) => WeatherBloc(WeatherApiClient()),
       child: MaterialApp(
         title: 'Weather App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        themeMode: ThemeMode.dark,
+        debugShowCheckedModeBanner: false,
         home: HomeScreen(WeatherBloc(WeatherApiClient())),
       ),
     );
